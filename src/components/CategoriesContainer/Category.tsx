@@ -1,4 +1,16 @@
-const Categories = () => {
+import {useParams} from "react-router-dom";
+import {useEffect} from "react";
+
+const Category = () => {
+
+
+const {name} = useParams();
+
+
+    useEffect(() => {
+
+
+    }, []);
     return (
         <div>
             
@@ -6,4 +18,4 @@ const Categories = () => {
     );
 };
 
-export {Categories};
+export {Category};
