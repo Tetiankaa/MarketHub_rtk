@@ -2,40 +2,84 @@ import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {productActions} from "../../redux/slices";
 import {Product} from "./Product";
+import {useSearchParams} from "react-router-dom";
 
 
 const Products = () =>{
    const dispatch = useAppDispatch();
-   const {products,total} = useAppSelector(state => state.product);
-    const [skipLimitValues, setSkipLimitValues] = useState<{skip:number,limit:number}>({skip:0,limit:30});
+   const {products,total, searchValue, isLoading, totalPages} = useAppSelector(state => state.product);
+
+    const [skipLimitValues, setSkipLimitValues] = useState<{skip:number,limit:number}>({skip:0,limit:16});
+
+    const [query, setQuery] = useSearchParams({page:'1'});
+    const page = query.get("page");
 
 
     useEffect(() => {
-          dispatch(productActions.getAll(skipLimitValues));
+        if (searchValue) {
+            dispatch(productActions.searchProducts({ search: searchValue }));
+        } else {
+            dispatch(productActions.getAll(skipLimitValues));
+        }
+    }, [dispatch, skipLimitValues, searchValue]);
 
-        const handleScroll = () => {
-            //height of the viewport + amount scrolled down >= height of the entire document, including content not visible within the viewport due to scrolling.
-            if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight) {
-                setSkipLimitValues(prevState => ({
-                    skip: prevState.skip,
-                    limit: Math.min(prevState.limit + 30,total)
-                }))
-            }
-        };
+        const previousPage = () =>{
+            setSkipLimitValues(prevState => ({
+                skip: prevState.skip - prevState.limit,
+                limit: Math.min(prevState.limit, total - prevState.skip)
+            }));
+            setQuery(prev => {
+                prev.set("page",`${+page - 1}`);
+                return prev;
+            });
+        }
 
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-
-    }, [dispatch, skipLimitValues, total]);
-
+        const nextPage = () =>{
+            setSkipLimitValues(prevState => ({
+                skip: prevState.skip + prevState.limit,
+                limit: Math.min(prevState.limit, total - prevState.skip)
+            }));
+            setQuery(prev => {
+                prev.set("page",`${+page + 1}`);
+                return prev;
+            });
+        }
     return (
-        <div>
-            {products.map(product=><Product product={product} key={product.id}/>)}
+        <>
+            {
+                <div className={"d-flex justify-content-center"}>
+                    <nav>
+                        <ul className="pagination">
+                            <li className={`page - item`}>
+                                <button className="page-link" disabled={page === "1"} onClick={previousPage}>Previous</button>
+                            </li>
 
-        </div>
+                            {<li className="page-item"><a className="page-link" href="#">1</a></li>}
+
+                            <li className="page-item">
+                                <button className="page-link" disabled={page === totalPages} onClick={nextPage}>Next</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+
+            {isLoading
+                ? (<div className={"d-flex justify-content-center"}>
+                    <div className="spinner-border text-info" role="status" style={{width: "4rem", height: "4rem"}}>
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>)
+                : products.length !== 0
+                    ? (<div className={"row"}>{products.map(product => <Product product={product} key={product.id}/>)}</div>)
+                    : (<div className="alert alert-primary d-flex justify-content-center" role="alert">
+                            No products found
+                        </div>
+                   )}
+
+
+        </>
+
     );
 }
 

@@ -32,7 +32,11 @@ const getAll = createAsyncThunk<string[], void>(
 const categoriesSlice = createSlice({
     name:"categoriesSlice",
     initialState:initialState,
-    reducers:{},
+    reducers:{
+        setSelectedCategory:(state, action)=>{
+            state.selectedCategory = action.payload;
+        }
+    },
     extraReducers:builder =>
         builder
             .addCase(getAll.fulfilled,(state, action) => {

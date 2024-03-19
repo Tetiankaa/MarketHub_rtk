@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice, isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
-import {IProduct, IResProduct} from "../../interfaces";
-import {productService} from "../../services";
+import {IProduct, IResProduct, ISearch} from "../../interfaces";
+import {categoriesService, productService, searchService} from "../../services";
 import {AxiosError} from "axios";
 
 type IState = {
@@ -9,8 +9,9 @@ type IState = {
     skip:number,
     limit:number,
     isLoading:boolean,
-    error:string
-
+    error:string,
+    searchValue:'',
+    totalPages:string
 }
 const initialState:IState = {
     products:[],
@@ -18,7 +19,9 @@ const initialState:IState = {
     skip:null,
     limit:null,
     isLoading:null,
-    error:null
+    error:null,
+    searchValue:'',
+    totalPages:''
 }
 
 const getAll = createAsyncThunk<IResProduct,{skip:number,limit:number}>(
@@ -34,27 +37,59 @@ const getAll = createAsyncThunk<IResProduct,{skip:number,limit:number}>(
             }
 )
 
+const getByCategoryName = createAsyncThunk<IResProduct,{category: string}>(
+    "productSlice/getByCategoryName",
+    async ({category},{rejectWithValue})=>{
+                try {
+                  const {data} = await categoriesService.getByCategoryName(category);
+                  return data;
+                }catch (e){
+                    const error = e as AxiosError;
+                    return rejectWithValue(error.response?.data);
+
+                }
+    }
+)
+
+const searchProducts = createAsyncThunk<IResProduct,ISearch>(
+    "productSlice/searchProducts",
+    async ({search},{rejectWithValue})=>{
+        try {
+           const {data} =  await searchService.getAll(search);
+           return data;
+        }catch (e) {
+            const error = e as AxiosError;
+            return rejectWithValue(error.response?.data);
+        }
+    }
+)
+
 const productSlice = createSlice({
     name:"productSlice",
     initialState:initialState,
-    reducers:{},
+    reducers:{
+        setSearchValue:(state, action)=>{
+            state.searchValue = action.payload
+        }
+    },
    extraReducers:builder =>
        builder
-           .addCase(getAll.fulfilled,(state, action)=>{
+           .addMatcher(isFulfilled(getAll, getByCategoryName, searchProducts), (state, action)=>{
                const {products,total,skip,limit} = action.payload;
                state.products = products;
                state.total = total;
                state.skip = skip;
                state.limit = limit;
+               state.totalPages = Math.ceil(total / 16).toString()
            })
-           .addMatcher(isFulfilled(getAll),(state)=>{
+           .addMatcher(isFulfilled(getAll, getByCategoryName, searchProducts),(state)=>{
                state.error = null;
                state.isLoading = false;
            })
-           .addMatcher(isPending(getAll),state => {
+           .addMatcher(isPending(getAll, getByCategoryName,searchProducts),state => {
                state.isLoading = true;
            })
-           .addMatcher(isRejected(getAll),(state, action) => {
+           .addMatcher(isRejected(getAll, getByCategoryName, searchProducts),(state, action) => {
                state.error = action.payload as string;
                state.isLoading = false;
            })
@@ -63,7 +98,7 @@ const productSlice = createSlice({
 
 const {reducer:productReducer,actions} = productSlice;
 
-const productActions = {...actions,getAll};
+const productActions = {...actions,getAll, getByCategoryName, searchProducts};
 
 export {
     productSlice,
