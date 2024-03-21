@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
@@ -16,6 +16,8 @@ const Header = () => {
 
     const {register, reset, handleSubmit} = useForm<ISearch>();
 
+    const [query, setQuery] = useSearchParams({page:'1'});
+
 
     useEffect(() => {
         dispatch(categoriesActions.getAll())
@@ -27,6 +29,10 @@ const Header = () => {
     };
 
     const handleSearch:SubmitHandler<ISearch> = (value) =>{
+        setQuery(prev => {
+            prev.set('page',`${1}`);
+            return prev;
+        })
         dispatch(productActions.setSearchValue(value.search));
         reset();
     }

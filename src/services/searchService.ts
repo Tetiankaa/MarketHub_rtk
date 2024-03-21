@@ -4,7 +4,7 @@ import {apiService} from "./apiService";
 import {urls} from "../constants";
 
 const searchService = {
-    getAll:(query:string):IRes<IResProduct>=>apiService.get(urls.products.search,{params:{q:query}})
+    getAll:(query:string, skip:number, limit:number):IRes<IResProduct>=>apiService.get(urls.products.search,{params:{q:query,skip,limit}})
 }
 
 export {

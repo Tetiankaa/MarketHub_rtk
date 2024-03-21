@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
-import {IProduct, IResProduct, ISearch} from "../../interfaces";
+import {IProduct, IResProduct, ISearch, ISkipLimitValues} from "../../interfaces";
 import {categoriesService, productService, searchService} from "../../services";
 import {AxiosError} from "axios";
 
@@ -11,7 +11,8 @@ type IState = {
     isLoading:boolean,
     error:string,
     searchValue:'',
-    totalPages:string
+    totalPages:number,
+    limitPerPage:number
 }
 const initialState:IState = {
     products:[],
@@ -21,10 +22,11 @@ const initialState:IState = {
     isLoading:null,
     error:null,
     searchValue:'',
-    totalPages:''
+    totalPages:0,
+    limitPerPage: 16
 }
 
-const getAll = createAsyncThunk<IResProduct,{skip:number,limit:number}>(
+const getAll = createAsyncThunk<IResProduct,ISkipLimitValues>(
     "productSlice/getAll",
             async ({skip,limit},{rejectWithValue})=>{
                 try {
@@ -37,11 +39,11 @@ const getAll = createAsyncThunk<IResProduct,{skip:number,limit:number}>(
             }
 )
 
-const getByCategoryName = createAsyncThunk<IResProduct,{category: string}>(
+const getByCategoryName = createAsyncThunk<IResProduct,{category: string, skip:number, limit:number}>(
     "productSlice/getByCategoryName",
-    async ({category},{rejectWithValue})=>{
+    async ({category,skip, limit},{rejectWithValue})=>{
                 try {
-                  const {data} = await categoriesService.getByCategoryName(category);
+                  const {data} = await categoriesService.getByCategoryName(category,skip, limit);
                   return data;
                 }catch (e){
                     const error = e as AxiosError;
@@ -51,11 +53,11 @@ const getByCategoryName = createAsyncThunk<IResProduct,{category: string}>(
     }
 )
 
-const searchProducts = createAsyncThunk<IResProduct,ISearch>(
+const searchProducts = createAsyncThunk<IResProduct, {search: string, skip:number, limit:number}>(
     "productSlice/searchProducts",
-    async ({search},{rejectWithValue})=>{
+    async ({search, skip, limit},{rejectWithValue})=>{
         try {
-           const {data} =  await searchService.getAll(search);
+           const {data} =  await searchService.getAll(search,skip, limit);
            return data;
         }catch (e) {
             const error = e as AxiosError;
@@ -80,7 +82,7 @@ const productSlice = createSlice({
                state.total = total;
                state.skip = skip;
                state.limit = limit;
-               state.totalPages = Math.ceil(total / 16).toString()
+               state.totalPages =  Math.ceil(total / state.limitPerPage)
            })
            .addMatcher(isFulfilled(getAll, getByCategoryName, searchProducts),(state)=>{
                state.error = null;

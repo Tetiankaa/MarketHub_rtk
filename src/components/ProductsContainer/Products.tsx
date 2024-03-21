@@ -1,68 +1,48 @@
 import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {productActions} from "../../redux/slices";
 import {Product} from "./Product";
-import {useSearchParams} from "react-router-dom";
+import {Pagination} from "../PaginationContainer";
+import {ISkipLimitValues} from "../../interfaces";
 
 
 const Products = () =>{
+
+
    const dispatch = useAppDispatch();
-   const {products,total, searchValue, isLoading, totalPages} = useAppSelector(state => state.product);
 
-    const [skipLimitValues, setSkipLimitValues] = useState<{skip:number,limit:number}>({skip:0,limit:16});
-
+   const {products,total, searchValue, isLoading, totalPages, limitPerPage} = useAppSelector(state => state.product);
+    console.log(products.length)
+    console.log(limitPerPage)
+    const [skipLimitValues, setSkipLimitValues] = useState<ISkipLimitValues>({skip:0,limit:limitPerPage});
+    console.log(skipLimitValues)
     const [query, setQuery] = useSearchParams({page:'1'});
-    const page = query.get("page");
+    const page = +query.get("page");
 
 
     useEffect(() => {
-        if (searchValue) {
-            dispatch(productActions.searchProducts({ search: searchValue }));
-        } else {
-            dispatch(productActions.getAll(skipLimitValues));
-        }
-    }, [dispatch, skipLimitValues, searchValue]);
+        setSkipLimitValues({...skipLimitValues,
+            skip: (page - 1) * limitPerPage,
+            limit: limitPerPage
+        });
+    }, [page,searchValue]);
 
-        const previousPage = () =>{
-            setSkipLimitValues(prevState => ({
-                skip: prevState.skip - prevState.limit,
-                limit: Math.min(prevState.limit, total - prevState.skip)
-            }));
-            setQuery(prev => {
-                prev.set("page",`${+page - 1}`);
-                return prev;
-            });
-        }
+    useEffect(() => {
 
-        const nextPage = () =>{
-            setSkipLimitValues(prevState => ({
-                skip: prevState.skip + prevState.limit,
-                limit: Math.min(prevState.limit, total - prevState.skip)
-            }));
-            setQuery(prev => {
-                prev.set("page",`${+page + 1}`);
-                return prev;
-            });
+            if (searchValue) {
+                dispatch(productActions.searchProducts({ search: searchValue, skip: skipLimitValues.skip, limit: skipLimitValues.limit }));
+            } else {
+                dispatch(productActions.getAll({skip: skipLimitValues.skip, limit: skipLimitValues.limit }));
+
         }
+    }, [dispatch, searchValue, skipLimitValues]);
+
+
     return (
         <>
-            {
-                <div className={"d-flex justify-content-center"}>
-                    <nav>
-                        <ul className="pagination">
-                            <li className={`page - item`}>
-                                <button className="page-link" disabled={page === "1"} onClick={previousPage}>Previous</button>
-                            </li>
-
-                            {<li className="page-item"><a className="page-link" href="#">1</a></li>}
-
-                            <li className="page-item">
-                                <button className="page-link" disabled={page === totalPages} onClick={nextPage}>Next</button>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            }
+            {<Pagination page={page} totalPages={totalPages} totalItems={total} skipLimitValues={skipLimitValues} onSetSkipLimit={setSkipLimitValues} setQuery={setQuery} limitPerPage={limitPerPage}/>}
 
             {isLoading
                 ? (<div className={"d-flex justify-content-center"}>

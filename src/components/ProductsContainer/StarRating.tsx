@@ -9,7 +9,7 @@ interface IProps{
 const StarRating:FC<IProps> = ({readonly, rating, size}) => {
     return (
         <div>
-            <Rating readonly={readonly} initialValue={rating} allowFraction={true} iconsCount={5} size={size} fillColor={"#f1d145"} emptyColor={'#726d6d'}/>
+            <Rating readonly={readonly} initialValue={rating} allowFraction={true} iconsCount={5} size={size} fillColor={"#f1d145"} emptyColor={'#726d6d'}/> <span className="badge text-bg-light">{rating}</span>
         </div>
     );
 };
