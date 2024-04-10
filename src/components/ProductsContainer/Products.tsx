@@ -10,14 +10,12 @@ import {ISkipLimitValues} from "../../interfaces";
 
 const Products = () =>{
 
-
    const dispatch = useAppDispatch();
 
    const {products,total, searchValue, isLoading, totalPages, limitPerPage} = useAppSelector(state => state.product);
-    console.log(products.length)
-    console.log(limitPerPage)
+
     const [skipLimitValues, setSkipLimitValues] = useState<ISkipLimitValues>({skip:0,limit:limitPerPage});
-    console.log(skipLimitValues)
+
     const [query, setQuery] = useSearchParams({page:'1'});
     const page = +query.get("page");
 

@@ -1,16 +1,20 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import {faMagnifyingGlass, faUser} from "@fortawesome/free-solid-svg-icons";
 
-import {categoriesActions, productActions} from "../../redux/slices";
+import {authActions, categoriesActions, productActions} from "../../redux/slices";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {ISearch} from "../../interfaces";
+import {authService} from "../../services";
 
 const Header = () => {
-  const dispatch =  useAppDispatch();
-    const {categories,selectedCategory} = useAppSelector(state => state.categories);
+    const dispatch =  useAppDispatch();
+    const {categories,selectedCategory, isLoading:isLoadingCategories} = useAppSelector(state => state.categories);
+    const {authUser, isLoading:isLoadingUser} = useAppSelector(state => state.auth);
+    console.log(isLoadingCategories)
+    console.log(isLoadingUser)
 
     const navigate = useNavigate();
 
@@ -18,10 +22,17 @@ const Header = () => {
 
     const [query, setQuery] = useSearchParams({page:'1'});
 
+    useEffect(() => {
+        dispatch(categoriesActions.getAll());
+    }, [dispatch]);
 
     useEffect(() => {
-        dispatch(categoriesActions.getAll())
-    }, [dispatch]);
+     const token = authService.getToken();
+       if (token && !authUser){
+           dispatch(authActions.getAuthUser());
+       }
+    }, [authUser, dispatch]);
+
 
     const handleCategoryClick = (category:string) => {
         navigate(`/category/${category}`)
@@ -62,9 +73,17 @@ const Header = () => {
                                     </ul>
                                 </div>
 
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/login">Login</a>
-                                </li>
+                                {<li className="nav-item">
+                                    {
+                                        isLoadingUser
+                                        ? ''
+                                        :
+                                             authUser
+                                        ? <a className="nav-link" href="/myaccount"><FontAwesomeIcon icon={faUser} />  {authUser.firstName}</a>
+                                        : <a className="nav-link" href="/account/login">Login</a>
+                                    }
+                                    </li>
+                                }
 
                             </ul>
 
