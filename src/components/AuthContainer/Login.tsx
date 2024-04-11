@@ -20,7 +20,7 @@ const Login = () => {
     }
     return (
         <div className={'d-flex justify-content-center'} >
-            <form className={"w-25"} onSubmit={handleSubmit(handleLogin)}>
+            <form className={"w-25 border border-info rounded-4 p-3"} onSubmit={handleSubmit(handleLogin)}>
                 <div className="mb-3">
                     <label className="form-label">Username</label>
                     <input type="text" className="form-control" aria-describedby="emailHelp" {...register('username')} required/>

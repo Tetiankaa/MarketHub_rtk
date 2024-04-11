@@ -24,6 +24,11 @@ const authService = {
     },
     getAccountInfo():IRes<IUser>{
         return apiService.get(urls.auth.user);
+    },
+    async refresh():Promise<void>{
+        const savedToken = this.getToken();
+       const {data:{token}} = await apiService.post(urls.auth.refresh,{headers:{'Authorization': `Bearer ${savedToken}`}});
+       this.setToken(token);
     }
 
 }
