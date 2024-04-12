@@ -49,9 +49,9 @@ const ForgotPassword = () => {
 
                 </div>
                         {showModal &&
-                            <div className="alert alert-success w-30" role="alert">
-                                We've sent you an email. If you don't see it, please check your spam folder.
-                            </div>}
+                               <div className="alert alert-success w-30" role="alert">
+                                   We've sent you an email. If you don't see it, please check your spam folder.
+                               </div>}
             </div>
 
 

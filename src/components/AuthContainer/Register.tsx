@@ -1,23 +1,38 @@
 import {faCircleCheck} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 
 const Register = () => {
+    const navigate = useNavigate();
+    const [isCheck, setIsCheck] = useState(false);
+
     return (
-        <div className={'d-flex justify-content-center flex-column'}>
-            <div>
-                <p className="fs-2">Registration</p>
+        <div className={'d-flex justify-content-center flex-column align-items-center'}>
+            <div className={'p-3'}>
+                <p className="fs-2"><b>Registration</b></p>
             </div>
 
-            <div className={'d-flex'}>
+            <div className={'d-flex justify-content-center align-items-center '}>
                 <div className={'w-25'}>
-
-                    <form className="border border-info rounded-4 p-3">
+                    <form>
                         <div className="mb-3">
                             <input type="email" className="form-control" placeholder={'Email'}/>
                         </div>
+
                         <div className="mb-3">
-                            <input type="password" className="form-control" placeholder="Password"/>
+                            <div className="password-container">
+                                <input type={isCheck ? "text" :"password"} className="form-control" placeholder="Password"/>
+                                <input type="checkbox" id={'showPassword'} onChange={()=>setIsCheck(prevState => !prevState)} hidden={true}/>
+                                <label className={'ms-1'} id={'showPasswordIcon'} htmlFor={'showPassword'}>
+                                    {isCheck
+                                        ? <img width="20" height="20" src="https://img.icons8.com/ios/50/visible--v1.png" alt="visible--v1"/>
+                                        : <img width="20" height="20" src="https://img.icons8.com/ios/50/hide.png" alt="hide"/>
+                                    }
+                                </label>
+                            </div>
                         </div>
+
                         <div className="form-check">
                             <input className="form-check-input" type="checkbox" id="subscribe"/>
                             <label className="form-check-label fs-6 fw-light" htmlFor="subscribe">
@@ -25,7 +40,7 @@ const Register = () => {
                             </label>
                         </div>
                         <div className="mb-1">
-                            <button type="submit" className="btn btn-primary mb-3 form-control">Register</button>
+                            <button type="submit" className="btn btn-primary mb-3 form-control" onClick={()=>navigate('/products')}>Register</button>
                         </div>
 
                         <div>
@@ -42,7 +57,7 @@ const Register = () => {
                     </form>
                 </div>
 
-                <div className={'w-25 ms-5 d-flex justify-content-center align-items-center flex-column'}>
+                <div className={'w-25 ms-5 d-flex flex-column'}>
                     <p className={'fs-4'}>What benefits do you get by registering?</p>
                     <p><FontAwesomeIcon icon={faCircleCheck} color={'#0d6efd'}/> Thanks to the saved address, you can
                         send the order in a few clicks</p>
