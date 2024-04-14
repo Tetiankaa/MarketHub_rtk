@@ -2,10 +2,19 @@ import {faCircleCheck} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {IRegisterUser} from "../../interfaces";
 
 const Register = () => {
     const navigate = useNavigate();
     const [isCheck, setIsCheck] = useState(false);
+    const {register, handleSubmit} = useForm<IRegisterUser>();
+
+    const handleRegister:SubmitHandler<IRegisterUser> = (user) =>{
+        // unfortunately API does not provide endpoint for handling register a new user logic, so I decided just printed data of registered user out to the console
+        console.log(user);
+        navigate('/products');
+    }
 
     return (
         <div className={'d-flex justify-content-center flex-column align-items-center'}>
@@ -15,14 +24,18 @@ const Register = () => {
 
             <div className={'d-flex justify-content-center align-items-center '}>
                 <div className={'w-25'}>
-                    <form>
+                    <form onSubmit={handleSubmit(handleRegister)}>
                         <div className="mb-3">
-                            <input type="email" className="form-control" placeholder={'Email'}/>
+                            <input type="email" className="form-control" placeholder={'Email'} {...register('email')}/>
+                        </div>
+
+                        <div className="mb-3">
+                            <input type="text" className="form-control" placeholder={'Username'} {...register('username')}/>
                         </div>
 
                         <div className="mb-3">
                             <div className="password-container">
-                                <input type={isCheck ? "text" :"password"} className="form-control" placeholder="Password"/>
+                                <input type={isCheck ? "text" :"password"} className="form-control" placeholder="Password" {...register('password')}/>
                                 <input type="checkbox" id={'showPassword'} onChange={()=>setIsCheck(prevState => !prevState)} hidden={true}/>
                                 <label className={'ms-1'} id={'showPasswordIcon'} htmlFor={'showPassword'}>
                                     {isCheck
@@ -34,13 +47,13 @@ const Register = () => {
                         </div>
 
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" id="subscribe"/>
-                            <label className="form-check-label fs-6 fw-light" htmlFor="subscribe">
+                            <input className="form-check-input" type="checkbox" id="subscribeToNews" {...register('isSubscribedToNews')}/>
+                            <label className="form-check-label fs-6 fw-light" htmlFor="subscribeToNews">
                                 I want to receive information about news, promotions and discount coupons.
                             </label>
                         </div>
                         <div className="mb-1">
-                            <button type="submit" className="btn btn-primary mb-3 form-control" onClick={()=>navigate('/products')}>Register</button>
+                            <button type="submit" className="btn btn-primary mb-3 form-control">Register</button>
                         </div>
 
                         <div>

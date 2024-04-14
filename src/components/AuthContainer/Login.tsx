@@ -1,15 +1,15 @@
-import {useAppDispatch, useAppSelector} from "../../hooks";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {ICredentials, ISearch} from "../../interfaces";
-import {authActions} from "../../redux/slices";
 import {useState} from "react";
-import {useNavigate, useNavigation} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {SubmitHandler, useForm} from "react-hook-form";
+
+import {useAppDispatch} from "../../hooks";
+import {ICredentials} from "../../interfaces";
+import {authActions} from "../../redux/slices";
+
 
 const Login = () => {
-   const dispatch = useAppDispatch();
-  const {isLoading,error,authUser} = useAppSelector(state => state.auth);
-
-  const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const {register, handleSubmit} = useForm<ICredentials>();
 

@@ -5,3 +5,4 @@ export * from './searchInterface';
 export * from './skipLimitValuesInterface';
 export * from './userInterface';
 export * from './credentialsInterface';
+export * from './registerUserInterface';

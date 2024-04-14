@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass, faUser} from "@fortawesome/free-solid-svg-icons";
@@ -8,19 +8,21 @@ import {authActions, categoriesActions, productActions} from "../../redux/slices
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {ISearch} from "../../interfaces";
 import {authService} from "../../services";
+import {router} from "../../router";
+
 
 const Header = () => {
     const dispatch =  useAppDispatch();
-    const {categories,selectedCategory, isLoading:isLoadingCategories} = useAppSelector(state => state.categories);
+    const {pathname} = useLocation();
+
+    const {categories,selectedCategory} = useAppSelector(state => state.categories);
     const {authUser, isLoading:isLoadingUser} = useAppSelector(state => state.auth);
-    console.log(isLoadingCategories)
-    console.log(isLoadingUser)
 
     const navigate = useNavigate();
 
     const {register, reset, handleSubmit} = useForm<ISearch>();
 
-    const [query, setQuery] = useSearchParams({page:'1'});
+    const [query, setQuery] = useSearchParams({page:'1', query:''});
 
     useEffect(() => {
         dispatch(categoriesActions.getAll());
@@ -40,12 +42,18 @@ const Header = () => {
     };
 
     const handleSearch:SubmitHandler<ISearch> = (value) =>{
+        if (pathname !== '/products'){
+            router.navigate('/products');
+        }
         setQuery(prev => {
             prev.set('page',`${1}`);
+            prev.set('query',value.search)
             return prev;
         })
         dispatch(productActions.setSearchValue(value.search));
         reset();
+
+
     }
 
     return (
@@ -58,7 +66,7 @@ const Header = () => {
                         <div className="collapse navbar-collapse">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
-                                    <a className="nav-link active" href="/products">Home</a>
+                                    <a className="nav-link" href="/products">Home</a>
                                 </li>
 
                                 <div className="nav-item dropdown">
@@ -77,21 +85,21 @@ const Header = () => {
                                     {
                                         isLoadingUser
                                         ? ''
-                                        :
-                                             authUser
-                                        ? <a className="nav-link" href="/myaccount"><FontAwesomeIcon icon={faUser} />  {authUser.firstName}</a>
-                                        : <a className="nav-link" href="/account/login">Login</a>
+                                        : authUser
+                                            ? <a className="nav-link" href="/myaccount"><FontAwesomeIcon icon={faUser} />  {authUser.firstName}</a>
+                                            : <a className="nav-link" href="/account/login">Login</a>
                                     }
                                     </li>
                                 }
 
                             </ul>
-
-                            <form className="d-flex" role="search" onSubmit={handleSubmit(handleSearch)}>
-                                <input className="form-control me-2" type="search" placeholder="Search"
-                                       aria-label="Search" {...register('search')}/>
-                                <button className="btn btn-outline-info" type="submit"><FontAwesomeIcon icon={faMagnifyingGlass}/></button>
-                            </form>
+                            {(pathname === '/products' || pathname.startsWith('/category')) &&
+                                <form className="d-flex" role="search" onSubmit={handleSubmit(handleSearch)}>
+                                    <input className="form-control me-2" type="search" placeholder="Search"
+                                           aria-label="Search" {...register('search')}/>
+                                    <button className="btn btn-outline-info" type="submit"><FontAwesomeIcon
+                                        icon={faMagnifyingGlass}/></button>
+                                </form>}
 
                         </div>
                     </div>

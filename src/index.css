@@ -5,7 +5,7 @@
 
 #showPasswordIcon {
     position: absolute;
-    right: 5px;
+    right: 7px;
     top: 50%;
     transform: translateY(-50%);
 }
