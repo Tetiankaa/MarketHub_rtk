@@ -7,11 +7,13 @@ type IState = {
     authUser:IUser,
     error:string,
     isLoading:boolean,
+    activePage:string
 }
 const initialState:IState = {
     authUser:null,
     isLoading:false,
     error:null,
+    activePage:''
 }
 
 const login = createAsyncThunk<IUser,ICredentials>(
@@ -45,7 +47,11 @@ const authSlice = createSlice({
     reducers:{
         setAuthUser:(state, action) =>{
             state.authUser = action.payload;
+        },
+        setActivePage:(state,  action)=> {
+            state.activePage = action.payload;
         }
+
     },
     extraReducers:builder =>
         builder

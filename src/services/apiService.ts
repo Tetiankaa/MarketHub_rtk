@@ -1,7 +1,7 @@
 import axios, {AxiosError} from "axios";
+
 import {baseURL, urls} from "../constants";
 import {authService} from "./authService";
-import {log} from "util";
 import {router} from "../router";
 
 const apiService = axios.create({baseURL});

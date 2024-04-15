@@ -28,6 +28,7 @@ const authService = {
     async refresh():Promise<void>{
         const savedToken = this.getToken();
         const {data:{token}} = await apiService.post(urls.auth.refresh,{headers:{'Authorization': `Bearer ${savedToken}`}});
+        console.log('refreshing done');
         this.setToken(token);
     }
 

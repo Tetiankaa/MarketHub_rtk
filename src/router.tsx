@@ -1,6 +1,14 @@
 import {createBrowserRouter, Navigate} from "react-router-dom";
 import {MainLayout} from "./layouts";
-import {ForgotPasswordPage, LoginAccountPage, ProductsByCategoryPage, ProductsPage, RegisterAccountPage} from "./pages";
+import {
+    ContactInformationPage,
+    ForgotPasswordPage,
+    LoginAccountPage,
+    PaymentCardsPage,
+    ProductsByCategoryPage,
+    ProductsPage,
+    RegisterAccountPage
+} from "./pages";
 import {AccountPage} from "./pages/AccountPage";
 
 const router = createBrowserRouter([
@@ -11,7 +19,10 @@ const router = createBrowserRouter([
             {path:"account/login",element:<LoginAccountPage/>},
             {path:"account/forgotpassword",element:<ForgotPasswordPage/>},
             {path:"account/register",element:<RegisterAccountPage/>},
-            {path:"myaccount",element:<AccountPage/>},
+            {path:"myaccount",element:<AccountPage/>, children:[
+                    {path:"my-payment-cards", element:<PaymentCardsPage/>},
+                    {path:"info", element:<ContactInformationPage/>}
+                ]},
         ]}
 ])
 

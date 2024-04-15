@@ -1,14 +1,19 @@
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {authActions} from "../../redux/slices";
 import {authService} from "../../services";
-import {useEffect} from "react";
+
 
 const Account = () => {
+
+    const INFO_PATH = '/myaccount/info';
+    const PAYMENT_CARDS_PATH = '/myaccount/my-payment-cards';
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const {authUser} = useAppSelector(state => state.auth);
+    const {authUser,activePage} = useAppSelector(state => state.auth);
 
     useEffect(() => {
         const token = authService.getToken();
@@ -16,6 +21,7 @@ const Account = () => {
             dispatch(authActions.getAuthUser());
         }
     }, [authUser, dispatch]);
+
     const handleLogout = () => {
         navigate('/products');
         authService.removeToken();
@@ -26,26 +32,40 @@ const Account = () => {
         <>
         { authUser &&
             <div>
-                <nav className="navbar navbar-expand-sm bg-body-tertiary">
-                    <div className="container-fluid">
+                <nav className="navbar navbar-expand-sm bg-body-tertiary" >
+                    <div className="container-fluid" style={{background:"rgba(208, 234, 241, 0.8)"}}>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
 
                         <div className="collapse navbar-collapse" id="navbarNavDropdown">
-                            <ul className="navbar-nav d-flex flex-column">
-                                <li className="nav-item">
-                                    <a className="nav-link active" aria-current="page" href="/myaccount/my-payment-cards">My payment cards</a>
+                            <ul className={`navbar-nav d-flex flex-column`} >
+                                <li className="nav-item" >
+                                    <NavLink
+                                       className={`nav-link ${activePage === PAYMENT_CARDS_PATH ? 'active' :''}`}
+                                       aria-current="page"
+                                       to={PAYMENT_CARDS_PATH}
+                                       onClick={()=> dispatch(authActions.setActivePage(PAYMENT_CARDS_PATH))}
+                                    >My payment cards</NavLink>
+
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="/myaccount/profile">Contact information</a>
+                                    <NavLink
+                                        className={`nav-link ${activePage === INFO_PATH ? 'active' :''}`}
+                                        to={INFO_PATH}
+                                        onClick={()=> dispatch(authActions.setActivePage(INFO_PATH))}
+                                    >Contact information</NavLink>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </nav>
 
-                <button type="button" className="btn btn-dark mt-3" onClick={handleLogout}>Log Out</button>
+                <button
+                    type="button"
+                    className="btn btn-dark mt-3"
+                    onClick={handleLogout}
+                >Log Out</button>
             </div>
 }
         </>
