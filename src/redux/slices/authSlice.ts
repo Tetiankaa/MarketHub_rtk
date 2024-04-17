@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice, isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
-import {ICredentials, IUser} from "../../interfaces";
+import {ICredentials, IRegisterUser, IUser} from "../../interfaces";
 import {AxiosError} from "axios";
-import {authService} from "../../services";
+import {authService, userService} from "../../services";
 
 type IState = {
     authUser:IUser,
@@ -10,7 +10,7 @@ type IState = {
     activePage:string
 }
 const initialState:IState = {
-    authUser:null,
+    authUser: null,
     isLoading:false,
     error:null,
     activePage:''
@@ -41,6 +41,20 @@ const getAuthUser = createAsyncThunk<IUser,void>(
             }
 )
 
+const register = createAsyncThunk<IUser,IRegisterUser>(
+    "register/authSlice",
+    async (user:IRegisterUser,{rejectWithValue})=>{
+        try {
+            const {data} = await userService.create(user);
+            console.log(data);
+            return data;
+        }catch (e) {
+            const error = e as AxiosError;
+            return rejectWithValue(error.response.data);
+        }
+    }
+)
+
 const authSlice = createSlice({
     name:"authSlice",
     initialState:initialState,
@@ -55,16 +69,16 @@ const authSlice = createSlice({
     },
     extraReducers:builder =>
         builder
-            .addMatcher(isFulfilled(login, getAuthUser),(state, action)=>{
+            .addMatcher(isFulfilled(login, getAuthUser, register),(state, action)=>{
                 state.authUser = action.payload;
                 state.isLoading = false;
                 state.error = null;
             })
 
-            .addMatcher(isPending(login, getAuthUser),state => {
+            .addMatcher(isPending(login, getAuthUser, register),state => {
                 state.isLoading = !state.isLoading
             })
-            .addMatcher(isRejected(login, getAuthUser), (state, action) => {
+            .addMatcher(isRejected(login, getAuthUser, register), (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string
             })
@@ -73,7 +87,7 @@ const authSlice = createSlice({
 
 const {reducer:authReducer,actions} = authSlice;
 
-const authActions = {...actions, login, getAuthUser};
+const authActions = {...actions, login, getAuthUser, register};
 
 export {
     authSlice,

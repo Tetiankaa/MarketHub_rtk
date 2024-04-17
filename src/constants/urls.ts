@@ -5,6 +5,7 @@ const categories = "/categories";
 const category = "/category";
 const search = "/search";
 const auth = "/auth";
+const users = "/users";
 
 
 const urls = {
@@ -20,7 +21,9 @@ const urls = {
         login:`${auth}/login`,
         user:`${auth}/me`,
         refresh:`${auth}/refresh`
-
+    },
+    users:{
+        add:`${users}/add`
     }
 
 }

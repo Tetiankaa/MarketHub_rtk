@@ -17,7 +17,6 @@ const Header = () => {
 
     const {categories,selectedCategory} = useAppSelector(state => state.categories);
     const {authUser, isLoading:isLoadingUser} = useAppSelector(state => state.auth);
-
     const navigate = useNavigate();
 
     const {register, reset, handleSubmit} = useForm<ISearch>();

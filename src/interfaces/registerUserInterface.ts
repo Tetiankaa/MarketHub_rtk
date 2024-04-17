@@ -1,6 +1,5 @@
 export interface IRegisterUser {
     email:string,
     username:string,
-    password:string,
-    isSubscribedToNews:boolean
+    password:string
 }

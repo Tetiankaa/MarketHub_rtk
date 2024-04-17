@@ -3,16 +3,22 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
+
 import {IRegisterUser} from "../../interfaces";
+import {useAppDispatch} from "../../hooks";
+import {authActions} from "../../redux/slices";
 
 const Register = () => {
     const navigate = useNavigate();
     const [isCheck, setIsCheck] = useState(false);
     const {register, handleSubmit} = useForm<IRegisterUser>();
+    const dispatch = useAppDispatch();
 
     const handleRegister:SubmitHandler<IRegisterUser> = (user) =>{
-        // unfortunately API does not provide endpoint for handling register a new user logic, so I decided just printed data of registered user out to the console
-        console.log(user);
+        //Adding a new user will not add it into the server.
+        //It will simulate a POST request and will return the new created user with a new id
+
+        dispatch(authActions.register(user));
         navigate('/products');
     }
 
@@ -47,7 +53,7 @@ const Register = () => {
                         </div>
 
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" id="subscribeToNews" {...register('isSubscribedToNews')}/>
+                            <input className="form-check-input" type="checkbox" id="subscribeToNews"/>
                             <label className="form-check-label fs-6 fw-light" htmlFor="subscribeToNews">
                                 I want to receive information about news, promotions and discount coupons.
                             </label>
