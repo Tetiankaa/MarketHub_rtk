@@ -5,3 +5,4 @@ export * from './ForgotPasswordPage';
 export * from './RegisterAccountPage';
 export * from './PaymentCardsPage';
 export * from './ContactInformationPage';
+export * from './LoginAndSecurityPage';

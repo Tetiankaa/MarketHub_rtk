@@ -10,6 +10,7 @@ const Account = () => {
 
     const INFO_PATH = '/myaccount/info';
     const PAYMENT_CARDS_PATH = '/myaccount/my-payment-cards';
+    const LOGIN_SECURITY = '/myaccount/login-and-security';
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -55,6 +56,13 @@ const Account = () => {
                                         to={INFO_PATH}
                                         onClick={()=> dispatch(authActions.setActivePage(INFO_PATH))}
                                     >Contact information</NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink
+                                        className={`nav-link ${activePage === LOGIN_SECURITY ? 'active' :''}`}
+                                        to={LOGIN_SECURITY}
+                                        onClick={()=> dispatch(authActions.setActivePage(LOGIN_SECURITY))}
+                                    >Login and Security</NavLink>
                                 </li>
                             </ul>
                         </div>

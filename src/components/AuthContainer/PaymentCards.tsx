@@ -3,27 +3,33 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useEffect} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 
-import {useAppSelector} from "../../hooks";
-import {IBank} from "../../interfaces";
+import {useAppDispatch, useAppSelector} from "../../hooks";
+import {IBank, IUser} from "../../interfaces";
+import {authActions} from "../../redux/slices";
 
 
 
 const PaymentCards = () => {
-      const {authUser} = useAppSelector(state => state.auth);
-      const {bank} = authUser;
 
-      const {setValue, register, handleSubmit,reset} = useForm<IBank>();
+      const dispatch = useAppDispatch();
+
+      const {authUser} = useAppSelector(state => state.auth);
+      const bank = authUser ? authUser.bank : null;
+
+      const {setValue, register, handleSubmit} = useForm<IBank>();
 
     useEffect(() => {
-        setValue('cardType',bank.cardType);
-        setValue('cardNumber',bank.cardNumber);
-        setValue('cardExpire',bank.cardExpire);
-        setValue('iban',bank.iban);
-        setValue('currency',bank.currency);
+        if (bank) {
+            setValue('cardType', bank.cardType);
+            setValue('cardNumber', bank.cardNumber);
+            setValue('cardExpire', bank.cardExpire);
+            setValue('iban', bank.iban);
+            setValue('currency', bank.currency);
+        }
     }, [bank, setValue]);
 
     const handlePaymentChanges:SubmitHandler<IBank> = (paymentDetails) =>{
-
+            dispatch(authActions.updatePaymentDetails({id:authUser.id, dataToUpdate:{bank:paymentDetails}}));
     }
     return (
         <div>

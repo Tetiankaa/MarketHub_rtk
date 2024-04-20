@@ -23,7 +23,8 @@ const urls = {
         refresh:`${auth}/refresh`
     },
     users:{
-        add:`${users}/add`
+        add:`${users}/add`,
+        update:(id:number)=>`${users}/${id}`
     }
 
 }

@@ -3,7 +3,7 @@ import {MainLayout} from "./layouts";
 import {
     ContactInformationPage,
     ForgotPasswordPage,
-    LoginAccountPage,
+    LoginAccountPage, LoginAndSecurityPage,
     PaymentCardsPage,
     ProductsByCategoryPage,
     ProductsPage,
@@ -21,7 +21,8 @@ const router = createBrowserRouter([
             {path:"account/register",element:<RegisterAccountPage/>},
             {path:"myaccount",element:<AccountPage/>, children:[
                     {path:"my-payment-cards", element:<PaymentCardsPage/>},
-                    {path:"info", element:<ContactInformationPage/>}
+                    {path:"info", element:<ContactInformationPage/>},
+                    {path:"login-and-security",element:<LoginAndSecurityPage/>}
                 ]},
         ]}
 ])
