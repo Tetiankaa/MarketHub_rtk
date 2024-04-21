@@ -1,6 +1,7 @@
-import {IProduct} from "../../interfaces";
+import {FC} from "react";
+import {useNavigate} from "react-router-dom";
 
-import {FC, FocusEventHandler, useState} from "react";
+import {IProduct} from "../../interfaces";
 import {StarRating} from "./StarRating";
 
 interface IProps{
@@ -11,9 +12,14 @@ const Product:FC<IProps> = ({product}) => {
 
     const displayTitle = title.length > 20 ? title.substring(0,18) + "..." : title;
 
+    const navigate = useNavigate();
+
+    const handleProductClick = (id:number) => {
+        navigate(`${id}`);
+    }
     return (
         <>
-            <div className={"col-md-3 mb-2 mt-2"} style={{cursor:'pointer'}}>
+            <div className={"col-md-3 mb-2 mt-2"} style={{cursor:'pointer'}} id={'product'} onClick={()=>handleProductClick(id)}>
                 <div className="card">
                     <div style={{ paddingBottom: "70%", position: "relative" }}>
                         <img src={thumbnail} className="card-img-top" alt={title} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />

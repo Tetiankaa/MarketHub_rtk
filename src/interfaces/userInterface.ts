@@ -5,6 +5,8 @@ import {ICompany} from "./companyInterface";
 export interface IUser {
     id:number,
     username:string,
+    password:string,
+    re_password?:string,
     email:string,
     age:number,
     phone:string,

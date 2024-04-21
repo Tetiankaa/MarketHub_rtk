@@ -4,7 +4,7 @@ import {
     ContactInformationPage,
     ForgotPasswordPage,
     LoginAccountPage, LoginAndSecurityPage,
-    PaymentCardsPage,
+    PaymentCardsPage, ProductInfoPage,
     ProductsByCategoryPage,
     ProductsPage,
     RegisterAccountPage
@@ -15,6 +15,7 @@ const router = createBrowserRouter([
     {path:"",element:<MainLayout/>, children:[
             {index:true,element:<Navigate to={'products'}/>},
             {path:"products",element:<ProductsPage/>},
+            {path:"products/:id", element: <ProductInfoPage/>},
             {path:"category/:name",element:<ProductsByCategoryPage/>},
             {path:"account/login",element:<LoginAccountPage/>},
             {path:"account/forgotpassword",element:<ForgotPasswordPage/>},

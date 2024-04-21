@@ -11,6 +11,7 @@ const users = "/users";
 const urls = {
     products:{
         base:products,
+        byId:(id:number | string):string=>`${products}/${id}`,
         search:`${products}/${search}`
     },
     categories:{

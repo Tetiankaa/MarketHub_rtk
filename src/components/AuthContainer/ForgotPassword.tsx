@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 
-import {forgotPasswordValidator} from "../../validators";
+import {formValidator} from "../../validators";
 
 
 const ForgotPassword = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
-    const {register,reset, formState:{isValid, errors}} = useForm<{email: string}>({mode:'all',resolver:joiResolver(forgotPasswordValidator)});
+    const {register,reset, formState:{isValid, errors}} = useForm<{email: string}>({mode:'all',resolver:joiResolver(formValidator)});
 
     return (
         <div className={'d-flex flex-column justify-content-center align-items-center'} >

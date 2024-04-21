@@ -1,10 +1,13 @@
 import {createAsyncThunk, createSlice, isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
-import {IProduct, IResProduct, ISearch, ISkipLimitValues} from "../../interfaces";
-import {categoriesService, productService, searchService} from "../../services";
 import {AxiosError} from "axios";
+
+import {IProduct, IResProduct, ISkipLimitValues} from "../../interfaces";
+import {categoriesService, productService, searchService} from "../../services";
+
 
 type IState = {
     products:IProduct[],
+    product:IProduct,
     total:number,
     skip:number,
     limit:number,
@@ -16,6 +19,7 @@ type IState = {
 }
 const initialState:IState = {
     products:[],
+    product:null,
     total:null,
     skip:null,
     limit:null,
@@ -37,6 +41,20 @@ const getAll = createAsyncThunk<IResProduct,ISkipLimitValues>(
                     return rejectWithValue(error.response?.data)
                 }
             }
+)
+
+const getById = createAsyncThunk<IProduct,{id:number | string}>(
+    "productSlice/getById",
+        async ({id},{rejectWithValue})=>{
+        try {
+            const {data} = await productService.getById(id);
+            console.log(data)
+            return data;
+        }catch (e) {
+            const error = e as AxiosError;
+            return rejectWithValue(error.response.data);
+        }
+        }
 )
 
 const getByCategoryName = createAsyncThunk<IResProduct,{category: string, skip:number, limit:number}>(
@@ -76,6 +94,11 @@ const productSlice = createSlice({
     },
    extraReducers:builder =>
        builder
+           .addCase(getById.fulfilled,(state, action)=>{
+               state.product = action.payload;
+               state.isLoading = false;
+               state.error = null;
+           })
            .addMatcher(isFulfilled(getAll, getByCategoryName, searchProducts), (state, action)=>{
                const {products,total,skip,limit} = action.payload;
                state.products = products;
@@ -88,19 +111,20 @@ const productSlice = createSlice({
                state.error = null;
                state.isLoading = false;
            })
-           .addMatcher(isPending(getAll, getByCategoryName,searchProducts),state => {
+           .addMatcher(isPending(getAll, getByCategoryName,searchProducts, getById),state => {
                state.isLoading = true;
            })
-           .addMatcher(isRejected(getAll, getByCategoryName, searchProducts),(state, action) => {
+           .addMatcher(isRejected(getAll, getByCategoryName, searchProducts, getById),(state, action) => {
                state.error = action.payload as string;
                state.isLoading = false;
            })
+
 
 })
 
 const {reducer:productReducer,actions} = productSlice;
 
-const productActions = {...actions,getAll, getByCategoryName, searchProducts};
+const productActions = {...actions,getAll, getByCategoryName, searchProducts, getById};
 
 export {
     productSlice,
