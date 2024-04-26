@@ -13,7 +13,7 @@ const ProductsByCategory = () => {
     const dispatch = useAppDispatch();
 
     const {products,total, isLoading, totalPages, limitPerPage} = useAppSelector(state => state.product);
-    console.log(total)
+
     const [skipLimitValues, setSkipLimitValues] = useState<ISkipLimitValues>({skip:0,limit:16});
 
     const [query, setQuery] = useSearchParams({page:'1'});

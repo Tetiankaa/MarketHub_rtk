@@ -48,7 +48,6 @@ const getById = createAsyncThunk<IProduct,{id:number | string}>(
         async ({id},{rejectWithValue})=>{
         try {
             const {data} = await productService.getById(id);
-            console.log(data)
             return data;
         }catch (e) {
             const error = e as AxiosError;
