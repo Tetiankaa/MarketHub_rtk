@@ -32,3 +32,14 @@
     font-size: 18px;
     font-weight: bold;
 }
+.product-image{
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+}
+.cart{
+    position: relative;
+}
+.cart span{
+    position: absolute;
+    top: -15%;
+    left: 75%;
+}

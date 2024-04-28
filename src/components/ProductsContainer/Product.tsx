@@ -3,19 +3,20 @@ import {useNavigate} from "react-router-dom";
 
 import {IProduct} from "../../interfaces";
 import {StarRating} from "./StarRating";
+import {useAppSelector} from "../../hooks";
 
 interface IProps{
     product:IProduct
 }
 const Product:FC<IProps> = ({product}) => {
     const {title,id, images, category, brand, discountPercentage, price, rating, stock, thumbnail, description} = product;
-
+    const priceWithDiscount =  discountPercentage && +(price - (price * (discountPercentage / 100))).toFixed(2);
     const displayTitle = title.length > 20 ? title.substring(0,18) + "..." : title;
 
     const navigate = useNavigate();
 
     const handleProductClick = (id:number) => {
-        navigate(`${id}`);
+        navigate(`/products/${id}`);
     }
     return (
         <>
@@ -28,7 +29,9 @@ const Product:FC<IProps> = ({product}) => {
                         <p className="card-text" data-bs-toggle="tooltip" data-bs-placement="bottom" title={title}>{displayTitle}</p>
 
                         <StarRating readonly={true} rating={rating} size={22}/>
-                        <p className="fw-bold fs-5 text-primary-emphasis mt-2">{price} $</p>
+                        <p className="fw-bold fs-5 text-primary-emphasis mt-2" style={discountPercentage ? {textDecoration:'line-through'} : {}}>{price} $</p>
+                        {discountPercentage &&
+                            <p className={'fs-4 fw-bold text-danger'}>{priceWithDiscount} $</p>}
                     </div>
                 </div>
             </div>

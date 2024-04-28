@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMagnifyingGlass, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faCartShopping, faMagnifyingGlass, faUser} from "@fortawesome/free-solid-svg-icons";
 
 import {authActions, categoriesActions, productActions} from "../../redux/slices";
 import {useAppDispatch, useAppSelector} from "../../hooks";
@@ -99,6 +99,15 @@ const Header = () => {
                                     <button className="btn btn-outline-info" type="submit"><FontAwesomeIcon
                                         icon={faMagnifyingGlass}/></button>
                                 </form>}
+
+                            <div className={'cart'}>
+                                <span className="badge text-bg-secondary">3</span>
+                                <button
+                                    className={'btn btn-info fw-bold ms-3'}
+                                    style={{color: 'white'}}
+                                ><FontAwesomeIcon icon={faCartShopping}/>
+                                </button>
+                            </div>
 
                         </div>
                     </div>

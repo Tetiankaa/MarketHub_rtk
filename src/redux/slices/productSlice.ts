@@ -15,7 +15,8 @@ type IState = {
     error:string,
     searchValue:'',
     totalPages:number,
-    limitPerPage:number
+    limitPerPage:number,
+    priceWithDiscount: number
 }
 const initialState:IState = {
     products:[],
@@ -27,7 +28,8 @@ const initialState:IState = {
     error:null,
     searchValue:'',
     totalPages:0,
-    limitPerPage: 16
+    limitPerPage: 16,
+    priceWithDiscount: null
 }
 
 const getAll = createAsyncThunk<IResProduct,ISkipLimitValues>(
@@ -95,6 +97,8 @@ const productSlice = createSlice({
        builder
            .addCase(getById.fulfilled,(state, action)=>{
                state.product = action.payload;
+               const {discountPercentage, price} = action.payload;
+               state.priceWithDiscount = discountPercentage && +(price - (price * (discountPercentage / 100))).toFixed(2)
                state.isLoading = false;
                state.error = null;
            })
