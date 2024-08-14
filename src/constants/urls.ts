@@ -1,7 +1,7 @@
 const baseURL = 'https://dummyjson.com';
 
 const products = "/products";
-const categories = "/categories";
+const categories = "/category-list";
 const category = "/category";
 const search = "/search";
 const auth = "/auth";
